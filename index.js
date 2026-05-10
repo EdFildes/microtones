@@ -1,16 +1,16 @@
-const gridSize = 20
-const boxSize = "40px"
-let rootFreq = document.getElementById("fundamental").value
+// const gridSize = 20
+// const boxSize = "40px"
+// let rootFreq = document.getElementById("fundamental").value
 
-document.getElementById("fundamental").addEventListener("change", (e => {
-    rootFreq = e.target.value
-}))
+// document.getElementById("fundamental").addEventListener("change", (e => {
+//     rootFreq = e.target.value
+// }))
 
-const mapToRange = (input, in_min, in_max, out_min, out_max)=> {
-  return (input - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
+// const mapToRange = (input, in_min, in_max, out_min, out_max)=> {
+//   return (input - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+// }
 
-const ratios = new Set()
+// const ratios = new Set()
 
 
 function mapPitchToColour(pitch){
@@ -69,7 +69,7 @@ function addTone(y, x, box) {
     }
 }
 
-function createGrid() {
+function _createGrid() {
     const wrapper = document.createElement("div");
     wrapper.style.display = "grid"
     wrapper.style.gridTemplateColumns = `repeat(${gridSize}, ${boxSize})`
@@ -109,6 +109,20 @@ function createGrid() {
     root.appendChild(wrapper)
 }
 
+function createGrid(cols, rows, remove, parentId, config = {}) {
+    const parent = document.getElementById(parentId)
+    for(let i=remove; i < ((cols * rows)); i++){
+        let gridItem = document.createElement("div");
+        gridItem.classList.add("grid-item")
+        if(config[i]){
+            itemConfig = config[i]
+            gridItem.classList.add(`item-${i}`)
+        }
+        
+        parent.appendChild(gridItem)
+    }
+}
+
 
 function createSpectrum() {
     const spectrumContainer = document.getElementById("spectrum_container");
@@ -120,5 +134,6 @@ function createSpectrum() {
 }
 
 
-createGrid()
-createSpectrum()
+createGrid(2, 9, 0, "root-note")
+createGrid(9, 9, 0, "play-grid")
+createGrid(2, 9, 0, "octave-chart")
