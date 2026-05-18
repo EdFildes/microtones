@@ -1,16 +1,16 @@
 // const gridSize = 20
 // const boxSize = "40px"
-// let rootFreq = document.getElementById("fundamental").value
+let rootFreq =  500 //document.getElementById("fundamental").value
 
 // document.getElementById("fundamental").addEventListener("change", (e => {
 //     rootFreq = e.target.value
 // }))
 
-// const mapToRange = (input, in_min, in_max, out_min, out_max)=> {
-//   return (input - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-// }
+const mapToRange = (input, in_min, in_max, out_min, out_max)=> {
+  return (input - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
-// const ratios = new Set()
+const ratios = new Set()
 
 
 function mapPitchToColour(pitch){
@@ -46,8 +46,8 @@ const comp = new Tone.Compressor(-30, 3).connect(reverb);
 
 const ampEnvStore = new Map()
 
-function addTone(y, x, box) {
-    if(!box.isActive){
+function handleTone(y, x, element) {
+    if(!element.classList.contains("active")){
         const ampEnv = new Tone.AmplitudeEnvelope({
             "attack": 0.4,
             "decay": 0.4,
@@ -55,58 +55,42 @@ function addTone(y, x, box) {
             "release": 1.0
         }).connect(comp);
         ampEnvStore.set(`${x},${y}`, ampEnv)
-        box.osc = new Tone.Oscillator(rootFreq * y/x, "sine").connect(ampEnv).start();
-        box.isActive = true;
-        box.style.border = "black solid 4px";
+        console.log("freq: ", rootFreq * y/x, "hz")
+        new Tone.Oscillator(rootFreq * y/x, "sine").connect(ampEnv).start();
         ampEnv.triggerAttack();
+        element.classList.add("active")
     } else {
         // box.osc.stop();
         const ampEnv = ampEnvStore.get(`${x},${y}`)
         ampEnv.triggerRelease();
-        box.isActive = false;
-        box.style.border = "white solid 1px";
         ampEnvStore.delete(`${x},${y}`)
+        element.classList.remove("active")
     }
 }
 
-function _createGrid() {
-    const wrapper = document.createElement("div");
-    wrapper.style.display = "grid"
-    wrapper.style.gridTemplateColumns = `repeat(${gridSize}, ${boxSize})`
-    wrapper.style.gridTemplateRows = `repeat(${gridSize}, ${boxSize})`
-    wrapper.style.columnGap = "5px";
-    wrapper.style.rowGap = "5px";
-
+function createPlayableGrid(gridSize, parentId) {
+    const parent = document.getElementById(parentId)
     for (let y = 0; y < gridSize; y++){
         for (let x = 0; x < gridSize; x++){
-            const box = document.createElement("div");
-            box.style.height = boxSize;
-            box.style.width = boxSize;
-            box.style.textAlign = "center";
-            // x axis
-            if(y === 0){
-                x && (box.innerHTML = x)
-                box.style.padding = "18px 0"
-            } else if(x === 0){
-                y && (box.innerHTML = y)
-                box.style.padding = "18px 0"
+            let gridItem = document.createElement("div");
+            gridItem.classList.add("grid-item")
+
+            // Number axis
+            if(y === 0 || x == 0){
+                gridItem.classList.add("axis-label")
+                gridItem.innerHTML = x || y || ""
+            } else if(ratios.has(y/x)){
+                gridItem.classList.add("unplayable")
             } else {
-                box.style.border = "white solid 1px";
-                box.style.borderStyle = "inset";
-                if(ratios.has(y/x)){
-                    box.style.backgroundColor = "grey"
-                } else {
-                    box.isActive = false;
-                    box.style.backgroundColor = mapPitchToColour(Math.log2(y/x))
-                    box.onclick = () => addTone(y,x, box); 
-                    ratios.add(y/x)
-                }
+                gridItem.classList.add("playable")
+                gridItem.style.backgroundColor = mapPitchToColour(Math.log2(y/x))
+                gridItem.addEventListener("click", () => handleTone(y,x, gridItem))
+                ratios.add(y/x)
             }
-            wrapper.appendChild(box)
+
+            parent.appendChild(gridItem)
         }
     }
-    const root = document.getElementById("root")
-    root.appendChild(wrapper)
 }
 
 function createGrid(cols, rows, remove, parentId, config = {}) {
@@ -133,7 +117,6 @@ function createSpectrum() {
     spectrum.style.background = `linear-gradient(to top, hsl(174 100% 50%), hsl(242 100% 50%))`;
 }
 
-
-createGrid(2, 9, 0, "root-note")
-createGrid(9, 9, 0, "play-grid")
-createGrid(2, 9, 0, "octave-chart")
+createGrid(1, 8, 0, "root-note")
+createPlayableGrid(9, "play-grid")
+createGrid(2, 8, 0, "octave-chart")

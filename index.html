@@ -5,23 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/p5@1.11.5/lib/p5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/15.1.5/Tone.min.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <title>Intervals</title>
 </head>
 <body>
-    <div class="container">
-        <div class="layout">
-            <div id="root-note" class="root-note">
-            </div>
-            <div id="play-grid" class="play-grid"></div>
-            <div id="octave-chart" class="octave-chart"></div>
-            <h1 class="title">MICRO TONES</h1>
-        </div>
-    </div>
+<main>
+    <div class="layout">
+        <div id="root-note" class="root-note">
+            <div class="root-note-title">Root</div>
+            <div id="root-note-slider-container" class="root-note-slider-container">
+                <div id="root-note-slider" class="root-note-slider">
 
-    <script src="index.js"></script>
+                </div>
+            </div>
+        </div>
+        <div id="play-grid" class="play-grid"></div>
+        <div id="octave-chart" class="octave-chart">
+            <div class="octave-chart-title">Octave</div>
+        </div>
+    <svg xmlns="http://www.w3.org/2000/svg">
+        <text x="-10" y="100" class="page-title">MICRO TONES</text>
+    </svg>
+    </div>
+</main>
+    <script src="js/note-slider.js"></script>
+    <script src="js/index.js"></script>
 </body>
 </html>

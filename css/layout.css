@@ -1,0 +1,30 @@
+:root{
+    background-color: black;
+    font-size: 10px;
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    color: white;
+    --grid-size: 9;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+}
+
+.layout{
+    display: grid;
+    grid-template-areas: 
+        "root-note play-grid octave-chart"
+        "title     title     title";
+    grid-template-columns: calc(var(--grid-size) * 1rem) calc(var(--grid-size) * 5rem) calc(var(--grid-size) * 1rem);
+    grid-template-rows: calc(var(--grid-size) * 5rem) calc(var(--grid-size) * 1rem);
+    gap: 6.25rem;
+    padding: 30px;
+}
