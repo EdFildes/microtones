@@ -1,6 +1,6 @@
 :root{
     background-color: black;
-    font-size: 10px;
+    font-size: 28px;
     font-family: "Inter", sans-serif;
     font-optical-sizing: auto;
     font-weight: 400;
@@ -9,6 +9,8 @@
 }
 
 body {
+    height: 100vh;
+    overflow: hidden;
     padding: 0;
     margin: 0;
 }

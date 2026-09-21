@@ -2,6 +2,7 @@ let drag = false
 let initialMousePosition
 let initialSliderTop = 0
 
+
 document.getElementById("root-note-slider-container").addEventListener("pointerdown", handleDragStart)
 document.getElementById("root-note-slider-container").addEventListener("pointermove", handleNoteSlider)
 document.getElementById("root-note-slider-container").addEventListener("pointerup", handleDragEnd)
@@ -10,7 +11,6 @@ document.getElementById("root-note-slider-container").addEventListener("mouselea
 
 function handleDragStart(event) {
     const noteSlider = document.getElementById("root-note-slider")
-    const container = noteSlider.getBoundingClientRect()
     initialMousePosition = event.clientY
     initialSliderTop = Number(noteSlider.style.top.replace("px", "")) || 0
 
@@ -28,6 +28,19 @@ function handleNoteSlider(event) {
         // constrain to slider container
         let newTop = Math.max(0, initialSliderTop + distanceMouseMoved)
         newTop = Math.min(newTop, sliderContainer.offsetHeight - container.height)
+
+        const freq = mapToRange(newTop, 0, sliderContainer.offsetHeight - container.height, 100, 2000)
+
+        noteSlider.innerHTML = `${Math.round(freq)}Hz`
+
+        console.log("freq: ", rootFreq, "hz")
+
+        rootFreq = freq;
+
+        oscStore.entries().forEach(([ratios, osc]) => {
+            const [x, y] = ratios.split(",")
+            osc.frequency.rampTo(rootFreq * y/x, 1);
+        })
 
         noteSlider.style.top = `${newTop}px`
     }
