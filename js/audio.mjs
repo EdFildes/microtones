@@ -19,7 +19,7 @@ export function handleTone(y, x, element) {
         oscStore.set(`${x},${y}`, osc)
         ampEnv.triggerAttack();
         element.classList.add("active")
-        console.log("freq: ", rootFreq * y/x, "hz")
+        console.log("Note ON:", rootFreq * y/x, "hz")
     } else {
         // box.osc.stop();
         const ampEnv = ampEnvStore.get(`${x},${y}`)
@@ -27,5 +27,6 @@ export function handleTone(y, x, element) {
         ampEnvStore.delete(`${x},${y}`)
         oscStore.delete(`${x},${y}`)
         element.classList.remove("active")
+        console.log("Note OFF:", rootFreq * y/x, "hz")
     }
 }

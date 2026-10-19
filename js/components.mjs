@@ -197,6 +197,7 @@ export const createPressable = (parent, size, x, y, fill) => {
     const svg = createSvgElement("svg");
     const g = createSvgElement("g", {filter: `url(#${filterId})`});
     const rect = createSvgElement("rect", { x: x, y: y, width: size, height: size, fill });
+    const volume = createSvgElement("rect", { x: x, y: y, width: size, height: 30, fill: "black" });
     const defs = createSvgElement("defs");
     const filter = createSvgElement("filter", { id: filterId, filterUnits: "userSpaceOnUse", "color-interpolation-filters": "sRGB", });
 
@@ -205,7 +206,11 @@ export const createPressable = (parent, size, x, y, fill) => {
     rect.classList.add("playable")
     rect.classList.add("grid-item")
     rect.addEventListener("click", () => handleTone(y,x, filter));
+    rect.addEventListener('mousemove', (e) => {
+            volume.setAttribute("height", e.layerY-120)
+    });
 
+    g.appendChild(volume)
     g.appendChild(rect);
     defs.appendChild(filter);
     svg.appendChild(g);
