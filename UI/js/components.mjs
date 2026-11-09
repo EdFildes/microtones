@@ -1,4 +1,4 @@
-import {handleTone} from "./audio.mjs";
+import { handleTone } from "./audio.mjs";
 
 export const createHorizontalLine = (parent, x, y) => {
     const hozLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
@@ -192,40 +192,64 @@ const createInnerShadow = (filter) => {
 
 }
 
+const createRadialGradient = () => {
+
+}
+
 export const createPressable = (parent, size, x, y, fill) => {
+    // declare elements
     const filterId = `filter_${x}_${y}`
     const svg = createSvgElement("svg");
-    const g = createSvgElement("g", {filter: `url(#${filterId})`});
-    const rect = createSvgElement("rect", { x: x, y: y, width: size, height: size, fill });
-    const volume = createSvgElement("rect", { x: x, y: y, width: size, height: 30, fill: "black" });
+    const g = createSvgElement("g", { filter: `url(#${filterId})` });
+    const rect = createSvgElement("rect", { x: x * size, y: y * size, width: size, height: size, fill });
+    const volume = createSvgElement("rect", { x: x * size, y: y * size, width: size, height: 30, fill: "black" });
     const defs = createSvgElement("defs");
     const filter = createSvgElement("filter", { id: filterId, filterUnits: "userSpaceOnUse", "color-interpolation-filters": "sRGB", });
-
     createInnerShadow(filter);
 
+
+    const stripes = []
+    const octave = Math.trunc(Math.log2(x / y))
+    for (let i = 0; i < octave; i++) {
+        const distance = 10
+        const x_val = (x * size) + (size / 2)
+        const stripe = createSvgElement("rect", { x: x_val, y: y * size, width: 10, height: size, fill: mapPitchToColour(x, y, 100, 30) });
+        stripes.push(stripe)
+    }
+    for (let i = 0; octave < i; i--) {
+        const distance = 10
+        const x_val = (x * size) + (size / 2) - distance + (distance * i)
+        const stripe = createSvgElement("rect", { x: x_val, y: y * size, width: 10, height: size, fill: mapPitchToColour(x, y, 100, 70) });
+        stripes.push(stripe)
+    }
+    // add classes
     rect.classList.add("playable")
     rect.classList.add("grid-item")
-    rect.addEventListener("click", () => handleTone(y,x, filter));
-    rect.addEventListener('mousemove', (e) => {
-            volume.setAttribute("height", e.layerY-120)
+
+    // handle click
+    rect.addEventListener("click", (e) => {
+        handleTone(y, x, filter)
     });
 
+    // apend to parents
     g.appendChild(volume)
     g.appendChild(rect);
+    stripes.forEach(stripe => g.appendChild(stripe))
+
     defs.appendChild(filter);
     svg.appendChild(g);
     svg.append(defs);
     parent.appendChild(svg);
 }
 
-export const createDisabled = (parent, size, x, y, fill) => {
+export const createDisabled = (parent, size, x, y) => {
     const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     rect.classList.add("grid-item")
-    rect.setAttribute("x", x);
-    rect.setAttribute("y", y);
+    rect.setAttribute("x", (x * size));
+    rect.setAttribute("y", (y * size));
     rect.setAttribute("width", size)
     rect.setAttribute("height", size)
-    rect.setAttribute("fill", fill);
+    rect.setAttribute("fill", "black");
     rect.classList.add("unplayable");
     parent.appendChild(rect);
 }
